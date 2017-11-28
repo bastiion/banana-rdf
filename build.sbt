@@ -162,11 +162,14 @@ lazy val sesame = Project("sesame", file("sesame"), settings = commonSettings)
     )
   ).dependsOn(rdfJVM, ntriplesJVM, rdfTestSuiteJVM % "test->compile")
 
-lazy val jsonldJS = Project("jsonld", file("jsonld.js"), settings = commonSettings)
-  .settings(
-    name := "banana-jsonld"
-  ).dependsOn(rdfJS, ntriplesJS, plantainJS, rdfTestSuiteJS % "test->compile")
+lazy val jsonldJS = project
+  .in(file("jsonld.js"))
   .enablePlugins(ScalaJSPlugin)
+  .settings(commonSettings: _*)
+  .settings(
+    name := "banana-jsonld",
+    libraryDependencies += "org.scalatest" %%% "scalatest" % scalaTestVersion
+  ).dependsOn(rdfJS, ntriplesJS, plantainJS, rdfTestSuiteJS % "test->compile")
 
 lazy val examples = Project("examples", file("misc/examples"), settings = commonSettings)
   .settings(

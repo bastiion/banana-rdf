@@ -24,12 +24,14 @@ object Dependencies {
    */
   val jodaConvert = "org.joda" % "joda-convert" % "1.8.1"
 
+  val scalaTestVersion = "3.0.1"
+
   /**
    * scalatest
    * @see http://www.scalatest.org
    * @see http://repo1.maven.org/maven2/org/scalatest
    */
-  val scalatest = "org.scalatest" %% "scalatest" % "3.0.1"
+  val scalatest = "org.scalatest" %% "scalatest" % scalaTestVersion
   
   /**
    * Akka Http Core
