@@ -6,6 +6,7 @@ package io
 trait N3
 trait TriG
 trait Turtle
+trait NQuads
 trait NTriples
 trait RDFXML
 trait RDFaXHTML

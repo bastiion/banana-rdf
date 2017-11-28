@@ -63,6 +63,11 @@ trait NTriplesReaderModule extends RDFModule {
   implicit val ntriplesReader: RDFReader[Rdf, Try, NTriples]
 }
 
+trait NQuadsReaderModule extends RDFModule {
+
+  implicit val nquadsReader: RDFReader[Rdf, Try, NQuads]
+}
+
 /* CurrentJsonLDReader contains all three reader types. If needed
  * these could be split out.
  */
@@ -104,6 +109,13 @@ trait TurtleWriterModule extends RDFModule {
 trait NTriplesWriterModule extends RDFModule {
 
   implicit val ntriplesWriter: RDFWriter[Rdf, Try, NTriples]
+
+}
+
+
+trait NQuadsWriterModule extends RDFModule {
+
+  implicit val nquadsWriter: RDFWriter[Rdf, Try, NQuads]
 
 }
 
