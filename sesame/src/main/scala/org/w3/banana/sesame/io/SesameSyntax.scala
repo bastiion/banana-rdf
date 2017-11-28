@@ -58,6 +58,26 @@ object SesameSyntax {
 
   }
 
+  implicit val NQuads: SesameSyntax[NQuads] = new SesameSyntax[NQuads] {
+
+    def write(uri: sURI, writer: Writer, baseURI: jURI) = {
+      val juri = new jURI(uri.toString)
+      val uriToWrite = baseURI.relativize(juri)
+      writer.write("<" + uriToWrite + ">")
+    }
+
+    override def rdfWriter(os: OutputStream, base: String): RDFWriter = new STrigWriter(os) {
+      val baseUri = new jURI(base)
+      override def writeURI(uri: sURI): Unit = write(uri, writer, baseUri)
+    }
+
+    override def rdfWriter(wr: Writer, base: String): RDFWriter = new STrigWriter(wr) {
+      val baseUri = new jURI(base)
+      override def writeURI(uri: sURI): Unit = write(uri, writer, baseUri)
+    }
+
+  }
+
   implicit val Turtle: SesameSyntax[Turtle] = new SesameSyntax[Turtle] {
     // Sesame's parser does not handle relative URI, but let us override the behavior :-)
     def write(uri: sURI, writer: Writer, baseURI: jURI) = {

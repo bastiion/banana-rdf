@@ -17,11 +17,13 @@ trait SesameModule
     with TriGReaderModule
     with TurtleReaderModule
     with NTriplesReaderModule
+    with NQuadsReaderModule
     with JsonLDReaderModule
     with RDFXMLWriterModule
     with TriGWriterModule
     with TurtleWriterModule
     with NTriplesWriterModule
+    with NQuadsWriterModule
     with JsonLDWriterModule
     with JsonSolutionsWriterModule
     with XmlSolutionsWriterModule
@@ -50,11 +52,15 @@ trait SesameModule
 
   implicit val ntriplesReader: RDFReader[Sesame, Try, NTriples] = new NTriplesReader
 
+  implicit val nquadsReader: RDFQuadReader[Sesame, Try, NQuads] = new SesameNQuadsReader
+
   implicit val sesameRDFWriterHelper = new SesameRDFWriterHelper
 
   implicit val rdfXMLWriter: RDFWriter[Sesame, Try, RDFXML] = sesameRDFWriterHelper.rdfxmlWriter
 
   implicit val triGWriter: RDFWriter[Sesame, Try, TriG] = sesameRDFWriterHelper.trigWriter
+
+  implicit val nquadsWriter: RDFWriter[Sesame, Try, NQuads] = sesameRDFWriterHelper.nquadsWriter
 
   implicit val turtleWriter: RDFWriter[Sesame, Try, Turtle] = sesameRDFWriterHelper.turtleWriter
 
