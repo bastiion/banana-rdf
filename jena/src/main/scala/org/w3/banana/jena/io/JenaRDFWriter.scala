@@ -67,6 +67,20 @@ object JenaRDFWriter {
     }
   }
 
+  val nquadsWriter: RDFWriter[Jena, Try, NQuads] = new RDFWriter[Jena, Try, NQuads] {
+    override def write(graph: Graph, os: OutputStream, base: String) = Try {
+      val relativeGraph = graph.relativize(URI(base))
+      RDFDataMgr.write(os, relativeGraph, JenaLang.NQUADS)
+    }
+
+    override def asString(graph: Graph, base: String) = Try {
+      val result = new StringWriter()
+      val relativeGraph = graph.relativize(URI(base))
+      RDFDataMgr.write(result, relativeGraph, JenaLang.NQUADS)
+      result.toString
+    }
+  }
+
   val turtleWriter: RDFWriter[Jena, Try, Turtle] = new RDFWriter[Jena, Try, Turtle] {
 
     // with the turtle writer we pass it  relative graph as that seems to stop the parser from adding the

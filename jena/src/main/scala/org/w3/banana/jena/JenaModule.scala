@@ -17,11 +17,13 @@ with SparqlHttpModule
 with RDFXMLReaderModule
 with TriGReaderModule
 with TurtleReaderModule
+with NQuadsReaderModule
 with NTriplesReaderModule
 with NTriplesWriterModule
 with RDFXMLWriterModule
 with TriGWriterModule
 with TurtleWriterModule
+with NQuadsWriterModule
 with JsonSolutionsWriterModule
 with XmlSolutionsWriterModule
 with JsonQueryResultsReaderModule
@@ -48,6 +50,8 @@ with XmlQueryResultsReaderModule {
 
   implicit val triGReader: RDFQuadReader[Jena, Try, TriG] = JenaRDFReader.trigReader()
 
+  implicit val nquadsReader: RDFQuadReader[Jena, Try, NQuads] = JenaRDFReader.nquadsReader()
+
   implicit val turtleReader: RDFReader[Jena, Try, Turtle] = JenaRDFReader.turtleReader()
 
   implicit val ntriplesReader: RDFReader[Jena, Try, NTriples] = new NTriplesReader
@@ -59,6 +63,8 @@ with XmlQueryResultsReaderModule {
   implicit val triGWriter: RDFWriter[Jena, Try, TriG] = JenaRDFWriter.trigWriter
 
   implicit val turtleWriter: RDFWriter[Jena, Try, Turtle] = JenaRDFWriter.turtleWriter
+
+  implicit val nquadsWriter: RDFWriter[Jena, Try, NQuads] = JenaRDFWriter.nquadsWriter
 
   implicit val n3Writer: RDFWriter[Jena, Try, N3] = JenaRDFWriter.n3Writer
 
