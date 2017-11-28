@@ -78,6 +78,7 @@ object Dependencies {
   val sesameQueryResult = "org.openrdf.sesame" % "sesame-queryresultio-sparqljson" % sesameVersion
   val sesameRioTurtle = "org.openrdf.sesame" % "sesame-rio-turtle" % sesameVersion
   val sesameRioRdfxml =  "org.openrdf.sesame" % "sesame-rio-rdfxml" % sesameVersion
+  val sesameRioNQuads =  "org.openrdf.sesame" % "sesame-rio-nquads" % sesameVersion
   val sesameSailMemory = "org.openrdf.sesame" % "sesame-sail-memory" % sesameVersion
   val sesameSailNativeRdf = "org.openrdf.sesame" % "sesame-sail-nativerdf" % sesameVersion
   val sesameRepositorySail = "org.openrdf.sesame" % "sesame-repository-sail" % sesameVersion
