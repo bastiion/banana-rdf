@@ -168,7 +168,8 @@ lazy val jsonldJS = project
   .settings(commonSettings: _*)
   .settings(
     name := "banana-jsonld",
-    libraryDependencies += "org.scalatest" %%% "scalatest" % scalaTestVersion
+    libraryDependencies += "org.scalatest" %%% "scalatest" % scalaTestVersion % Test,
+    jsDependencies += ProvidedJS / "jsonld.js"
   ).dependsOn(rdfJS, ntriplesJS, plantainJS, rdfTestSuiteJS % "test->compile")
 
 lazy val examples = Project("examples", file("misc/examples"), settings = commonSettings)
