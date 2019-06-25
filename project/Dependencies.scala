@@ -107,6 +107,8 @@ object Dependencies {
   val fuseki = "org.apache.jena" % "apache-jena-fuseki" % fusekiVersion
   val fusekiServer = "org.apache.jena" % "jena-fuseki-server" % fusekiVersion
 
+  val btreeVersion = "0.6.1"
+
   val servlet = "javax.servlet" % "javax.servlet-api" % "3.1.0"
   val httpComponents = "org.apache.httpcomponents" % "httpclient" % "4.5.2"
 }
