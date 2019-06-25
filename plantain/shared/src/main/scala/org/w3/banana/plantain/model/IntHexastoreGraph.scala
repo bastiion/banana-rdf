@@ -22,4 +22,7 @@ object IntHexastoreGraph {
 
   def empty[S, P, O]: IntHexastoreGraph[S, P, O] = IntHexastoreGraph[S, P, O](HexastoreTriples.empty[Int], IntSPODictionary.empty[S, P, O], 0)
 
+  def emptyWithBTreeDictionary[S, P, O]: IntHexastoreGraph[S, P, O] =
+    IntHexastoreGraph[S, P, O](HexastoreTriples.empty[Int], IntBTreeSPODictionary.empty[S, P, O](4), 0)
+
 }
