@@ -133,7 +133,7 @@ lazy val plantain = crossProject
   .in(file("plantain"))
   .settings(commonSettings: _*)
   .settings(
-    libraryDependencies ++= Seq(akkaHttpCore, sesameRioTurtle, jsonldJava)
+    libraryDependencies ++= Seq(akkaHttpCore, sesameRioTurtle, jsonldJava,  "xyz.hyperreal" %%% "b-tree" % btreeVersion)
   )
   .settings(name := "banana-plantain")
   .dependsOn(rdf, ntriples, rdfTestSuite % "test->compile")
