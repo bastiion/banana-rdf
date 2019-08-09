@@ -130,3 +130,9 @@ trait XmlQueryResultsReaderModule extends RDFModule {
   implicit val xmlQueryResultsReader: SparqlQueryResultsReader[Rdf, SparqlAnswerXml]
 
 }
+
+trait RDFQuadOpsModule extends RDFModule {
+
+  implicit val ops: RDFQuadOps[Rdf]
+
+}

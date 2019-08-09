@@ -3,7 +3,9 @@ package org.w3.banana
 trait RDF {
   // types related to the RDF datamodel
   type Graph
+  type QuadGraph
   type Triple
+  type Quad
   type Node
   type URI <: Node
   type BNode <: Node
