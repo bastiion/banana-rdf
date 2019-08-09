@@ -1,13 +1,16 @@
 package org.w3.banana.jena
 
 import org.apache.jena.datatypes.{BaseDatatype, RDFDatatype, TypeMapper}
+import org.apache.jena.graph
 import org.apache.jena.graph.{Graph => JenaGraph, Node => JenaNode, Triple => JenaTriple, _}
 import org.apache.jena.rdf.model.{Literal => JenaLiteral, Seq => _}
+import org.apache.jena.sparql.core.{DatasetDescription, DatasetGraph, Quad => JenaQuad}
+import org.apache.jena.sparql.util.DatasetUtils
 import org.w3.banana._
 
 import scala.collection.JavaConverters._
 
-class JenaOps extends RDFOps[Jena] with JenaMGraphOps with DefaultURIOps[Jena] {
+class JenaOps extends RDFQuadOps[Jena] with JenaMGraphOps with DefaultURIOps[Jena] {
 
   // graph
 
@@ -162,5 +165,38 @@ class JenaOps extends RDFOps[Jena] with JenaMGraphOps with DefaultURIOps[Jena] {
     left isIsomorphicWith right
 
   def graphSize(g: Jena#Graph): Int = g.size()
+
+  override def emptyQuadGraph: DatasetGraph = DatasetUtils.createDatasetGraph(new DatasetDescription())
+
+  override def makeQuadGraph(it: Iterable[JenaQuad]): DatasetGraph = {
+    val g = emptyQuadGraph
+    it.foreach(g.add)
+    g
+  }
+
+  override def getQuads(graph: DatasetGraph): Iterable[JenaQuad] = graph.find().asScala.toIterable
+
+  override def makeQuad(s: JenaNode, p: Node_URI, o: JenaNode, c: JenaNode): JenaQuad = new JenaQuad(s, p, o ,c)
+
+  override def makeQuad(s: JenaNode, p: Node_URI, o: JenaNode): JenaQuad = new JenaQuad(s, p, o , JenaQuad.defaultGraphIRI)
+
+  override def fromQuad(quad: JenaQuad): (JenaNode, Node_URI, JenaNode, JenaNode) = {
+    if (quad.getPredicate.isInstanceOf[Jena#URI])
+      (quad.getSubject, quad.getPredicate.asInstanceOf[Jena#URI], quad.getObject, quad.getGraph)
+    else
+      throw new RuntimeException("fromTriple: predicate " + quad.getPredicate.toString + " must be a URI")
+  }
+
+  override def find(graph: DatasetGraph, subject: JenaNode, predicate: JenaNode, objectt: JenaNode, context: JenaNode): Iterable[JenaQuad] =
+    graph.find(subject, predicate, objectt, context).asScala.toIterable
+
+  override def asTripleGraph(graph: DatasetGraph): JenaGraph = graph.getUnionGraph
+
+  override def asTriple(quad: JenaQuad): JenaTriple = quad.asTriple()
+
+  override def getDefaultGraph(graph: DatasetGraph): JenaGraph = graph.getDefaultGraph
+
+  override def getNamedGraph(graph: DatasetGraph, c: JenaNode): JenaGraph = graph.getGraph(c)
+
 
 }

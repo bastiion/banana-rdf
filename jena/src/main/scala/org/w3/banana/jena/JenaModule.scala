@@ -10,7 +10,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 trait JenaModule
 extends RDFModule
-with RDFOpsModule
+with RDFQuadOpsModule
 with RecordBinderModule
 with SparqlGraphModule
 with SparqlHttpModule
