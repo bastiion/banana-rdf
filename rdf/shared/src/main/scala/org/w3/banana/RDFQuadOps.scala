@@ -10,6 +10,8 @@ extends RDFOps[Rdf] {
 
   def makeQuadGraph(it: Iterable[Rdf#Triple], c: Option[Rdf#Node]): Rdf#QuadGraph
 
+  def makeDefaultGraph(graph: Rdf#Graph): Rdf#QuadGraph
+
   def getQuads(graph: Rdf#QuadGraph): Iterable[Rdf#Quad]
 
   // quad
