@@ -27,20 +27,20 @@ class QuadW[Rdf <: RDF](val quad: Rdf#Quad) extends AnyVal {
 
   def graphname(implicit ops: RDFQuadOps[Rdf]): Rdf#Node = {
     val (_, _, _, c) = ops.fromQuad(quad)
-    n
+    c
   }
 
 
   def resolveAgainst(baseUri: Rdf#URI)(implicit ops: RDFQuadOps[Rdf]): Rdf#Quad = {
     import ops._
-    val (s, p, o, n) = ops.fromQuad(quad)
-    ops.makeQuad(s.resolveAgainst(baseUri), p, o.resolveAgainst(baseUri), n)
+    val (s, p, o, c) = ops.fromQuad(quad)
+    ops.makeQuad(s.resolveAgainst(baseUri), p, o.resolveAgainst(baseUri), c)
   }
 
   def relativize(baseUri: Rdf#URI)(implicit ops: RDFQuadOps[Rdf]): Rdf#Quad = {
     import ops._
-    val (s, p, o, n) = ops.fromQuad(quad)
-    ops.makeQuad(s.relativize(baseUri), p, o.relativize(baseUri), n)
+    val (s, p, o, c) = ops.fromQuad(quad)
+    ops.makeQuad(s.relativize(baseUri), p, o.relativize(baseUri), c)
   }
 
   def relativizeAgainst(baseUri: Rdf#URI)(implicit ops: RDFQuadOps[Rdf]): Rdf#Quad = {

@@ -8,6 +8,8 @@ package object banana {
 
   type TripleMatch[Rdf <: RDF] = (Rdf#NodeMatch, Rdf#NodeMatch, Rdf#NodeMatch)
 
+  type QuadMatch[Rdf <: RDF] = (Rdf#NodeMatch, Rdf#NodeMatch, Rdf#NodeMatch, Rdf#NodeMatch)
+
   type SparqlSolutionsWriter[Rdf <: RDF, +T] = io.Writer[Rdf#Solutions, Try, T]
 
   implicit class FutureW[T](f: Future[T]) {
