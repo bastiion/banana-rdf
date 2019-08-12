@@ -1,8 +1,7 @@
 package org.w3.banana.jena
 
 import org.apache.jena.datatypes.{BaseDatatype, RDFDatatype, TypeMapper}
-import org.apache.jena.graph
-import org.apache.jena.graph.{Graph => JenaGraph, Node => JenaNode, Triple => JenaTriple, _}
+import org.apache.jena.graph.{ Graph => JenaGraph, Node => JenaNode, Triple => JenaTriple, _}
 import org.apache.jena.rdf.model.{Literal => JenaLiteral, Seq => _}
 import org.apache.jena.sparql.core.{DatasetDescription, DatasetGraph, Quad => JenaQuad}
 import org.apache.jena.sparql.util.DatasetUtils
@@ -176,9 +175,9 @@ class JenaOps extends RDFQuadOps[Jena] with JenaMGraphOps with DefaultURIOps[Jen
 
   override def getQuads(graph: DatasetGraph): Iterable[JenaQuad] = graph.find().asScala.toIterable
 
-  override def makeQuad(s: JenaNode, p: Node_URI, o: JenaNode, c: JenaNode): JenaQuad = new JenaQuad(s, p, o ,c)
+  override def makeQuad(s: JenaNode, p: Node_URI, o: JenaNode, c: JenaNode): JenaQuad = new JenaQuad(c, s, p ,o)
 
-  override def makeQuad(s: JenaNode, p: Node_URI, o: JenaNode): JenaQuad = new JenaQuad(s, p, o , JenaQuad.defaultGraphIRI)
+  override def makeQuad(s: JenaNode, p: Node_URI, o: JenaNode): JenaQuad = new JenaQuad( JenaQuad.defaultGraphIRI , s, p, o)
 
   override def fromQuad(quad: JenaQuad): (JenaNode, Node_URI, JenaNode, JenaNode) = {
     if (quad.getPredicate.isInstanceOf[Jena#URI])
@@ -196,7 +195,21 @@ class JenaOps extends RDFQuadOps[Jena] with JenaMGraphOps with DefaultURIOps[Jen
 
   override def getDefaultGraph(graph: DatasetGraph): JenaGraph = graph.getDefaultGraph
 
+  override def makeDefaultGraph(graph: JenaGraph): DatasetGraph = {
+    val qgraph = emptyQuadGraph
+    qgraph.setDefaultGraph(graph)
+    qgraph
+  }
+
   override def getNamedGraph(graph: DatasetGraph, c: JenaNode): JenaGraph = graph.getGraph(c)
 
-
+  override def makeQuadGraph(it: Iterable[JenaTriple], c: Option[JenaNode]): DatasetGraph = {
+    val qgraph = emptyQuadGraph
+    val graph = makeGraph(it)
+    c match {
+      case Some(context) => qgraph.addGraph(context, graph)
+      case _ => qgraph.addGraph(JenaQuad.defaultGraphIRI, graph)
+    }
+    qgraph
+  }
 }
