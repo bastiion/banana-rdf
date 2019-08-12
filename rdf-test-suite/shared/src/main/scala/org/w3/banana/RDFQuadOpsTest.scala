@@ -1,28 +1,50 @@
 package org.w3.banana
 
 import org.scalatest.{Matchers, WordSpec}
-import org.w3.banana.{PrefixBuilder, RDF, RDFOps}
 
 class RDFQuadOpsTest[Rdf <: RDF]()(implicit ops: RDFQuadOps[Rdf]) extends WordSpec with Matchers  {
 
   import ops._
 
-  "can build a quad graph and get a named graph" in {
+  val foaf = FOAFPrefix[Rdf]
+  val rdfs = RDFSPrefix[Rdf]
+  val context = URI(foaf.prefixIri)
+  val contextFun = URI(foaf.prefixIri + "fun/")
 
-    val foaf = FOAFPrefix[Rdf]
-    val rdfs = RDFSPrefix[Rdf]
-    val context = makeUri(foaf.prefixIri)
-    val contextFun = makeUri(foaf.prefixIri + "fun/")
+  "can build a quad graph and get its named graph, default graph and union" in {
 
+
+    Triple(foaf.Agent, rdf.typ, rdfs.Class)
     val g = makeQuadGraph(List(
-      makeQuad(foaf.Agent, rdf.typ, rdfs.Class, context ) ,
-      makeQuad(foaf.Agent, rdfs.label, makeLiteral("Agent"), context ) ,
-      makeQuad(foaf.Agent, rdfs.comment, makeLiteral("not 007"), contextFun ),
-      makeQuad(foaf.Agent, rdfs.comment, makeLiteral("not 007"), contextFun )
+      Quad(foaf.Agent, rdf.typ, rdfs.Class, context ) ,
+      Quad(foaf.Agent, rdfs.label, Literal("Agent"), context ) ,
+      Quad(foaf.Agent, rdfs.comment, Literal("not 007"), contextFun ),
+      Quad(foaf.Agent, rdfs.isDefinedBy, context)
     ))
 
-    getNamedGraph(g, context).isIsomorphicWith((foaf.Agent.a(rdfs.Class) -- rdfs.label ->- "Agent").graph) shouldBe true
-    getNamedGraph(g, context).isIsomorphicWith((foaf.Agent.a(rdfs.Class) -- rdfs.label ->- "Agent").graph) shouldBe true
+    val ng = getNamedGraph(g, context)
+    val defg = getDefaultGraph(g)
+    val uniong = asTripleGraph(g) union defg
+
+    println(uniong.toString)
+
+    ng.isIsomorphicWith((foaf.Agent.a(rdfs.Class) -- rdfs.label ->- "Agent").graph) shouldBe true
+
+    defg.isIsomorphicWith((foaf.Agent -- rdfs.isDefinedBy ->- context).graph) shouldBe true
+
+    uniong.isIsomorphicWith(
+      (foaf.Agent.a(rdfs.Class)
+      -- rdfs.label ->- "Agent"
+      -- rdfs.comment ->- "not 007"
+      -- rdfs.isDefinedBy ->- context
+      ).graph) shouldBe true
+
+  }
+
+  "can convert quad to triple" in {
+
+    Quad(foaf.Agent, rdf.typ, rdfs.Class, context ).asTriple shouldEqual Triple(foaf.Agent, rdf.typ, rdfs.Class)
+
 
   }
 
