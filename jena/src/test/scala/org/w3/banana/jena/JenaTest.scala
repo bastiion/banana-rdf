@@ -4,6 +4,8 @@ import org.w3.banana._
 
 object JenaOpsTest extends RDFOpsTest[Jena]
 
+class JenaQuadOpsTest extends RDFQuadOpsTest[Jena]
+
 object JenaGraphTest extends GraphTest[Jena]
 
 object JenaMGraphTest extends MGraphTest[Jena]
