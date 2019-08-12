@@ -30,6 +30,10 @@ class QuadW[Rdf <: RDF](val quad: Rdf#Quad) extends AnyVal {
     c
   }
 
+  def asTriple(implicit ops: RDFQuadOps[Rdf]): Rdf#Triple = {
+    ops.asTriple(quad)
+  }
+
 
   def resolveAgainst(baseUri: Rdf#URI)(implicit ops: RDFQuadOps[Rdf]): Rdf#Quad = {
     import ops._

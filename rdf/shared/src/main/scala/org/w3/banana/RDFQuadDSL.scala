@@ -16,7 +16,6 @@ trait RDFQuadDSL[Rdf <: RDF] extends RDFDSL[Rdf] { this: RDFQuadOps[Rdf] =>
 
   object QuadGraph {
     def empty: Rdf#QuadGraph = emptyQuadGraph
-    def apply(elems: Rdf#Triple*): Rdf#QuadGraph = makeQuadGraph(elems.toIterable, None)
     def apply(elems: Rdf#Quad*): Rdf#QuadGraph = makeQuadGraph(elems.toIterable)
     def apply(it: Iterable[Rdf#Quad]): Rdf#QuadGraph = makeQuadGraph(it)
   }

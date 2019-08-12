@@ -1,7 +1,8 @@
 package org.w3.banana
 
 trait RDFQuadOps[Rdf <: RDF]
-extends RDFOps[Rdf] {
+extends RDFOps[Rdf]
+  with RDFQuadDSL[Rdf] {
 
 
   def emptyQuadGraph: Rdf#QuadGraph
