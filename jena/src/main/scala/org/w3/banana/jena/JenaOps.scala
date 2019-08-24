@@ -165,45 +165,47 @@ class JenaOps extends RDFQuadOps[Jena] with JenaMGraphOps with DefaultURIOps[Jen
 
   def graphSize(g: Jena#Graph): Int = g.size()
 
-  override def emptyQuadGraph: DatasetGraph = DatasetUtils.createDatasetGraph(new DatasetDescription())
+  override def emptyQuadGraph: Jena#QuadGraph = DatasetUtils.createJena#QuadGraph(new DatasetDescription())
 
-  override def makeQuadGraph(it: Iterable[JenaQuad]): DatasetGraph = {
+  override def makeQuadGraph(it: Iterable[Jena#Quad]): Jena#QuadGraph = {
     val g = emptyQuadGraph
     it.foreach(g.add)
     g
   }
 
-  override def getQuads(graph: DatasetGraph): Iterable[JenaQuad] = graph.find().asScala.toIterable
+  override def getQuads(graph: Jena#QuadGraph): Iterable[Jena#Quad] = graph.find().asScala.toIterable
 
-  override def makeQuad(s: JenaNode, p: Node_URI, o: JenaNode, c: JenaNode): JenaQuad = new JenaQuad(c, s, p ,o)
+  override def makeQuad(s: Jena#Node, p: Jena#URI, o: Jena#Node, c: Jena#Node): Jena#Quad = JenaQuad.create(c, s, p ,o)
 
-  override def makeQuad(s: JenaNode, p: Node_URI, o: JenaNode): JenaQuad = new JenaQuad( JenaQuad.defaultGraphIRI , s, p, o)
+  override def makeQuad(s: Jena#Node, p: Jena#URI, o: Jena#Node): Jena#Quad =  JenaQuad.create( JenaQuad.defaultGraphIRI , s, p, o)
 
-  override def fromQuad(quad: JenaQuad): (JenaNode, Node_URI, JenaNode, JenaNode) = {
-    if (quad.getPredicate.isInstanceOf[Jena#URI])
-      (quad.getSubject, quad.getPredicate.asInstanceOf[Jena#URI], quad.getObject, quad.getGraph)
-    else
-      throw new RuntimeException("fromTriple: predicate " + quad.getPredicate.toString + " must be a URI")
+  override def fromQuad(quad: Jena#Quad): (Jena#Node, Jena#URI, Jena#Node, Jena#Node) = {
+    quad.getPredicate match {
+      case uri: Node_URI => (quad.getSubject, uri, quad.getObject, quad.getGraph)
+      case _ => throw new RuntimeException("fromTriple: predicate " + quad.getPredicate.toString + " must be a URI")
+    }
   }
 
-  override def find(graph: DatasetGraph, subject: JenaNode, predicate: JenaNode, objectt: JenaNode, context: JenaNode): Iterable[JenaQuad] =
+  override def find(graph: Jena#QuadGraph, subject: Jena#Node, predicate: Jena#Node, objectt: Jena#Node, context: Jena#Node): Iterable[Jena#Quad] =
     graph.find(subject, predicate, objectt, context).asScala.toIterable
 
-  override def asTripleGraph(graph: DatasetGraph): JenaGraph = graph.getUnionGraph
+  override def asTripleGraph(graph: Jena#QuadGraph): Jena#Graph = graph.getUnionGraph
 
-  override def asTriple(quad: JenaQuad): JenaTriple = quad.asTriple()
+  override def asTriple(quad: Jena#Quad): JenaTriple = quad.asTriple()
 
-  override def getDefaultGraph(graph: DatasetGraph): JenaGraph = graph.getDefaultGraph
+  override def asQuad(triple: Jena#Triple, c: Option[Jena#Node]): Jena#Quad = JenaQuad.create(c.getOrElse(JenaQuad.defaultGraphIRI), triple)
 
-  override def makeDefaultGraph(graph: JenaGraph): DatasetGraph = {
+  override def getDefaultGraph(graph: Jena#QuadGraph): Jena#Graph = graph.getDefaultGraph
+
+  override def makeDefaultGraph(graph: Jena#Graph): Jena#QuadGraph = {
     val qgraph = emptyQuadGraph
     qgraph.setDefaultGraph(graph)
     qgraph
   }
 
-  override def getNamedGraph(graph: DatasetGraph, c: JenaNode): JenaGraph = graph.getGraph(c)
+  override def getNamedGraph(graph: Jena#QuadGraph, c: Jena#Node): Jena#Graph = graph.getGraph(c)
 
-  override def makeQuadGraph(it: Iterable[JenaTriple], c: Option[JenaNode]): DatasetGraph = {
+  override def toQuadGraph(it: Iterable[JenaTriple], c: Option[Jena#Node]): Jena#QuadGraph = {
     val qgraph = emptyQuadGraph
     val graph = makeGraph(it)
     c match {
@@ -212,4 +214,7 @@ class JenaOps extends RDFQuadOps[Jena] with JenaMGraphOps with DefaultURIOps[Jen
     }
     qgraph
   }
+
+  override def isDefaultGraph(quad: Jena#Quad): Boolean = quad.isDefaultGraph
+
 }
