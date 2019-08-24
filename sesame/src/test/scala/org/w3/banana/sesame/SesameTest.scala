@@ -4,6 +4,8 @@ import org.w3.banana._
 
 object SesameOpsTest extends RDFOpsTest[Sesame]
 
+class SesameQuadOpsTest extends RDFQuadOpsTest[Sesame]
+
 object SesameGraphTest extends GraphTest[Sesame]
 
 object SesameMGraphTest extends MGraphTest[Sesame]

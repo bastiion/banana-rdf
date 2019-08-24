@@ -9,7 +9,7 @@ import org.w3.banana._
 
 import scala.collection.JavaConverters._
 
-class SesameOps extends RDFOps[Sesame] with SesameMGraphOps with DefaultURIOps[Sesame] {
+class SesameOps extends RDFQuadOps[Sesame] with SesameMGraphOps with DefaultURIOps[Sesame] {
 
   val valueFactory: ValueFactory = ValueFactoryImpl.getInstance()
 
@@ -165,5 +165,71 @@ class SesameOps extends RDFOps[Sesame] with SesameMGraphOps with DefaultURIOps[S
   }
 
   def graphSize(g: Sesame#Graph): Int = g.size()
+
+  override def emptyQuadGraph: Sesame#QuadGraph = emptyGraph
+
+  override def makeQuadGraph(it: Iterable[Sesame#Quad]): Sesame#QuadGraph = makeGraph(it)
+
+  override def toQuadGraph(it: Iterable[Sesame#Triple], c: Option[Sesame#Node]): Sesame#QuadGraph = {
+    c match {
+      case Some(context) =>
+        makeGraph(it.map(s => makeQuad(s.getSubject, s.getPredicate, s.getObject, context)))
+      case _ =>
+        makeGraph(it.map(s => makeQuad(s.getSubject, s.getPredicate, s.getObject)))
+    }
+  }
+
+  override def makeDefaultGraph(graph: Sesame#Graph): Sesame#QuadGraph =
+    makeGraph(getTriples(graph).map(tr => asTriple(tr)))
+
+  override def getQuads(graph: Sesame#QuadGraph): Iterable[Sesame#Quad] = graph.iterator.asScala.toIterable
+
+  override def makeQuad(s: Sesame#Node, p: Sesame#URI, o: Sesame#Node, c: Sesame#Node): Sesame#Quad =
+    s match {
+      case res:Resource=>
+        c match {
+          case context:Resource =>
+            new ContextStatementImpl(res, p, o, context)
+          case null =>  new ContextStatementImpl(res, p, o, null)
+          case  _ => throw new RuntimeException("makeQuad: in Sesame context " + c.toString + " must be a either Sesame#URI or BlankNode")
+        }
+      case _=> throw new RuntimeException("makeQuad: in Sesame subject " + s.toString + " must be a either Sesame#URI or BlankNode")
+    }
+
+  override def makeQuad(s: Sesame#Node, p: Sesame#URI, o: Sesame#Node): Statement = makeTriple(s, p, o)
+
+  override def fromQuad(quad: Statement): (Sesame#Node, Sesame#URI, Sesame#Node, Sesame#Node) = (quad.getSubject, quad.getPredicate, quad.getObject, quad.getContext)
+
+  override def find(graph: Sesame#QuadGraph, subject: Sesame#NodeMatch, predicate: Sesame#NodeMatch, objectt: Sesame#NodeMatch, context: Sesame#NodeMatch): Iterable[Sesame#Quad] =
+    predicate match {
+      case p:URI =>
+        subject match {
+          case s:Resource =>
+            context match {
+              case c:Resource =>
+                graph.filter(s, p, objectt, c).iterator().asScala.toIterable
+              case  _ => throw new RuntimeException("find: in Sesame context " + context.toString + " must be a either Sesame#URI or BlankNode")
+            }
+          case _ => throw new RuntimeException("find: in Sesame subject " + subject.toString + " must be a either Sesame#URI or BlankNode")
+        }
+      case _ => throw new RuntimeException("find: in Sesame predicate " + predicate.toString + " must be a either Sesame#URI")
+    }
+
+  override def asTripleGraph(graph: Sesame#QuadGraph): Sesame#Graph = graph
+
+  override def asTriple(quad: Sesame#Quad): Sesame#Triple =  makeTriple(quad.getSubject, quad.getPredicate, quad.getObject)
+
+  override def asQuad(triple: Sesame#Triple, c: Option[Sesame#Node]): Sesame#Quad =  makeQuad(triple.getSubject, triple.getPredicate, triple.getObject, c.orNull)
+
+  override def getNamedGraph(graph: Sesame#QuadGraph, c: Sesame#Node): Sesame#Graph =
+    c match {
+      case context:Resource =>
+        graph.filter(null ,null, null, context)
+      case  _ => throw new RuntimeException("getNamedGraph: in Sesame context " + c.toString + " must be a either Sesame#URI or BlankNode")
+    }
+
+  override def getDefaultGraph(graph: Sesame#QuadGraph): Sesame#Graph = graph.filter(null,null,null,null)
+
+  override def isDefaultGraph(quad: Statement): Boolean = quad.getContext == null
 
 }

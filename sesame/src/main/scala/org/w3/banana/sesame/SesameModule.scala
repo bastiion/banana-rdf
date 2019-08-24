@@ -9,7 +9,7 @@ import scala.util.Try
 
 trait SesameModule
     extends RDFModule
-    with RDFOpsModule
+    with RDFQuadOpsModule
     with RecordBinderModule
     with SparqlGraphModule
     // with SparqlHttpModule
