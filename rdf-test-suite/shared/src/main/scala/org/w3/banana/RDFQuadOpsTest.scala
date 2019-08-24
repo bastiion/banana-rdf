@@ -11,22 +11,22 @@ class RDFQuadOpsTest[Rdf <: RDF]()(implicit ops: RDFQuadOps[Rdf]) extends WordSp
   val context = URI(foaf.prefixIri)
   val contextFun = URI(foaf.prefixIri + "fun/")
 
+  def exampleQuads = List(
+    Quad(foaf.Agent, rdf.typ, rdfs.Class, context ) ,
+    Quad(foaf.Agent, rdfs.label, Literal("Agent"), context ) ,
+    Quad(foaf.Agent, rdfs.comment, Literal("not 007"), contextFun ),
+    Quad(foaf.Agent, rdfs.isDefinedBy, context)
+  )
+
   "can build a quad graph and get its named graph, default graph and union" in {
 
 
     Triple(foaf.Agent, rdf.typ, rdfs.Class)
-    val g = makeQuadGraph(List(
-      Quad(foaf.Agent, rdf.typ, rdfs.Class, context ) ,
-      Quad(foaf.Agent, rdfs.label, Literal("Agent"), context ) ,
-      Quad(foaf.Agent, rdfs.comment, Literal("not 007"), contextFun ),
-      Quad(foaf.Agent, rdfs.isDefinedBy, context)
-    ))
+    val g = makeQuadGraph(exampleQuads)
 
     val ng = getNamedGraph(g, context)
     val defg = getDefaultGraph(g)
     val uniong = asTripleGraph(g) union defg
-
-    println(uniong.toString)
 
     ng.isIsomorphicWith((foaf.Agent.a(rdfs.Class) -- rdfs.label ->- "Agent").graph) shouldBe true
 
@@ -47,6 +47,16 @@ class RDFQuadOpsTest[Rdf <: RDF]()(implicit ops: RDFQuadOps[Rdf]) extends WordSp
 
 
   }
+
+  "quad to triple to quad shpuld not have a context" in {
+
+    val quad = asQuad((Quad(foaf.Agent, rdf.typ, rdfs.Class, context ).asTriple))
+
+    quad.isDefaultGraph shouldBe true
+
+  }
+
+
 
 
 }
