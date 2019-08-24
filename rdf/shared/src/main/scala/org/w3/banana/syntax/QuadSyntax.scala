@@ -34,20 +34,24 @@ class QuadW[Rdf <: RDF](val quad: Rdf#Quad) extends AnyVal {
     ops.asTriple(quad)
   }
 
+  def isDefaultGraph(implicit ops: RDFQuadOps[Rdf]): Boolean = {
+    ops.isDefaultGraph(quad)
+  }
 
-  def resolveAgainst(baseUri: Rdf#URI)(implicit ops: RDFQuadOps[Rdf]): Rdf#Quad = {
+
+  def resolveAgainstQ(baseUri: Rdf#URI)(implicit ops: RDFQuadOps[Rdf]): Rdf#Quad = {
     import ops._
     val (s, p, o, c) = ops.fromQuad(quad)
     ops.makeQuad(s.resolveAgainst(baseUri), p, o.resolveAgainst(baseUri), c)
   }
 
-  def relativize(baseUri: Rdf#URI)(implicit ops: RDFQuadOps[Rdf]): Rdf#Quad = {
+  def relativizeQ(baseUri: Rdf#URI)(implicit ops: RDFQuadOps[Rdf]): Rdf#Quad = {
     import ops._
     val (s, p, o, c) = ops.fromQuad(quad)
     ops.makeQuad(s.relativize(baseUri), p, o.relativize(baseUri), c)
   }
 
-  def relativizeAgainst(baseUri: Rdf#URI)(implicit ops: RDFQuadOps[Rdf]): Rdf#Quad = {
+  def relativizeAgainstQ(baseUri: Rdf#URI)(implicit ops: RDFQuadOps[Rdf]): Rdf#Quad = {
     import ops._
     val (s, p, o, c) = ops.fromQuad(quad)
     ops.makeQuad(s.relativizeAgainst(baseUri), p, o.relativizeAgainst(baseUri), c)

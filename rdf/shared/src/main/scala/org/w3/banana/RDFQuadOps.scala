@@ -9,7 +9,7 @@ extends RDFOps[Rdf]
 
   def makeQuadGraph(it: Iterable[Rdf#Quad]): Rdf#QuadGraph
 
-  def makeQuadGraph(it: Iterable[Rdf#Triple], c: Option[Rdf#Node]): Rdf#QuadGraph
+  def toQuadGraph(it: Iterable[Rdf#Triple], c: Option[Rdf#Node]): Rdf#QuadGraph
 
   def makeDefaultGraph(graph: Rdf#Graph): Rdf#QuadGraph
 
@@ -29,8 +29,12 @@ extends RDFOps[Rdf]
 
   def asTriple(quad: Rdf#Quad): Rdf#Triple
 
+  def asQuad(triple: Rdf#Triple, c: Option[Rdf#Node] = None): Rdf#Quad
+
   def getNamedGraph(graph: Rdf#QuadGraph, c: Rdf#Node): Rdf#Graph
 
   def getDefaultGraph(graph: Rdf#QuadGraph): Rdf#Graph
+
+  def isDefaultGraph(quad: Rdf#Quad): Boolean
 
 }
